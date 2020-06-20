@@ -4,6 +4,8 @@
     {
         // Átomos primitivos
         Number,
+        String,
+        Whitespace,
         
         // Identificadores de Tipo
         FloatIdentifier,

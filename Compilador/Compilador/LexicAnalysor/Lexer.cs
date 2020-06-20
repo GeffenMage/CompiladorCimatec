@@ -10,6 +10,9 @@ namespace Compilador.LexicAnalysor
 
         private int Position;
 
+        // Tabela de símbolos
+        List<Token> TokenTable = new List<Token>();
+
         private char CaractereAtual {
             get {
                 if (Position >= Text.Length)
