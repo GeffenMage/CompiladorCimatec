@@ -11,9 +11,9 @@ namespace Compilador.LexicAnalysor
         private int Position;
 
         // Tabela de símbolos
-        List<Token> TokenTable = new List<Token>();
+        List<SymbolEntry> SymbolTable = new List<SymbolEntry>();
 
-        private char CaractereAtual {
+        private char CurrentChar {
             get {
                 if (Position >= Text.Length)
                     return '\0'; // Caractere que indica o final do arquivo
@@ -30,6 +30,23 @@ namespace Compilador.LexicAnalysor
         public void NextChar()
         {
             Position++;
+        }
+
+        public Token NextToken()
+        {
+            if (char.IsDigit(CurrentChar))
+            {
+                var start = Position;
+
+                while (char.IsDigit(CurrentChar))
+                    NextChar();
+
+                var length = Position - start;
+                var text = Text.Substring(start, length);
+                int.TryParse(text, out var value);
+                return new Token(TokenKind.Number, start, text, value);
+            }
+
         }
 
         public Token ReadInputText()
