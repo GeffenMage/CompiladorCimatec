@@ -26,7 +26,8 @@
         BeginIdentifier,
         EndIdentifier,
         EndOfLineIdentifier,
-        
+        EndOfFile,
+
         // Palavras-Chave
         ReturnKeyword,
         BreakKeywork,
@@ -38,7 +39,7 @@
         MinusOperator,
         TimesOperator,
         DivideOperator,
-        AssignOperator,
+        AssignOperator,             // Representa o caractere '='
         ModOperator,
         
         ParenthesisStart,
@@ -51,7 +52,7 @@
         CurlyBraceEnd,
 
         // Operadores lógicos
-        EqualsOperator,
+        EqualsOperator,              // Representa os caracteres '=='
         NotEqualsOperator,
         
         GreaterThenOperator,
@@ -68,6 +69,9 @@
         SingleLineComment,
         
         MultiLineCommentStart,
-        MultiLineCommentEnd
+        MultiLineCommentEnd,
+
+        // Token Não identificado
+        BadToken,
     }
 }
