@@ -311,6 +311,15 @@ namespace Compilador.LexicAnalysor
 
                     return (Token)token;
 
+                case '.':
+                    token = new Token(TokenKind.Dot, CurrentLineNumber, ",", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.Dot);
+
+                    return (Token)token;
+
                 case '\"':
                     token = new Token(TokenKind.Quotes, CurrentLineNumber, "\"", null);
 
@@ -326,7 +335,7 @@ namespace Compilador.LexicAnalysor
 
             TokenRegistry.AddRegister(TokenKind.BadToken);
 
-            var badToken = new Token(TokenKind.BadToken, CurrentLineNumber, Text.Substring(Position - 1, 1), null);
+            var badToken = new Token(TokenKind.BadToken, CurrentLineNumber, Text.Substring(Position, 1), null);
 
             Position++;
 

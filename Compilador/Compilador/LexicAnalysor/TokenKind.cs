@@ -80,5 +80,6 @@
 
         // Token Não identificado
         BadToken = 6,
+        Dot = 516,
     }
 }
