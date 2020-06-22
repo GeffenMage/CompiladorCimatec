@@ -49,6 +49,7 @@ namespace Compilador
                     Console.WriteLine($"Escrevendo arquivos de relatório em: {inputFilePath}");
 
                     report.CreateLexicAnalysisReport();
+                    report.CreateSymbolTableReport();
 
                     Console.WriteLine("Relatórios Escritos!\n");
                 }

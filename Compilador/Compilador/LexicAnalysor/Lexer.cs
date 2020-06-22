@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Compilador.LexicAnalysor
 {
@@ -69,7 +70,7 @@ namespace Compilador.LexicAnalysor
         {
             // Verifica se chegou ao final do arquivo
             if (Position >= Text.Length)
-                return new Token(TokenKind.EndOfFile, Position, "\0", null);
+                return new Token(TokenKind.EndOfFile, CurrentLineNumber, "\0", null);
                         
             if (char.IsDigit(CurrentChar))
             {
@@ -87,20 +88,44 @@ namespace Compilador.LexicAnalysor
                 {
                     text = Text.Substring(start, MaxTokenLenght);
                     int.TryParse(text, out var value);
-                    token = new Token(TokenKind.Number, CurrentLineNumber, text, value);
+                    token = new Token(TokenKind.IntegerNumber, CurrentLineNumber, text, value);
                 }
                 else
                 {
                     text = Text.Substring(start, length);
                     int.TryParse(text, out var value);
-                    token = new Token(TokenKind.Number, CurrentLineNumber, text, value);                    
+                    token = new Token(TokenKind.IntegerNumber, CurrentLineNumber, text, value);                    
                 }
 
-                TokenRegistry.AddRegister(TokenKind.Number);
+                TokenRegistry.AddRegister(TokenKind.IntegerNumber);
 
                 return (Token)token;
             }
-            
+
+            if (char.IsLetter(CurrentChar))
+            {
+                var start = Position;
+
+                while (char.IsLetter(CurrentChar) || char.IsDigit(CurrentChar))
+                    NextChar();
+
+                var length = Position - start;
+                var text = string.Empty;
+
+                if (length > MaxTokenLenght)
+                {
+                    text = Text.Substring(start, MaxTokenLenght);
+
+                    return IdentifyCharToken(text, length);
+                }
+                else
+                {
+                    text = Text.Substring(start, length);
+
+                    return IdentifyCharToken(text, length);
+                }
+            }
+
             if (char.IsWhiteSpace(CurrentChar))
             {
                 var start = Position;
@@ -120,84 +145,178 @@ namespace Compilador.LexicAnalysor
                 return (Token)token;
             }
 
-
+            // identificação de caracteres únicos
             switch (CurrentChar)
             {
                 case '+':
                     var token = new Object();
-                    token = new Token(TokenKind.PlusOperator, Position++, "+", null);
+                    token = new Token(TokenKind.PlusOperator, CurrentLineNumber, "+", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.PlusOperator);
 
                     return (Token)token;                   
                 
                 case '-':
-                    token = new Token(TokenKind.MinusOperator, Position++, "-", null);
+                    token = new Token(TokenKind.MinusOperator, CurrentLineNumber, "-", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.MinusOperator);
 
                     return (Token)token;
                 
                 case '/':
-                    token = new Token(TokenKind.DivideOperator, Position++, "/", null);
+                    token = new Token(TokenKind.DivideOperator, CurrentLineNumber, "/", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.DivideOperator);
 
                     return (Token)token;
                 
                 case '*':
-                    token = new Token(TokenKind.TimesOperator, Position++, "*", null);
+                    token = new Token(TokenKind.TimesOperator, CurrentLineNumber, "*", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.TimesOperator);
 
                     return (Token)token;
                 
                 case '(':
-                    token = new Token(TokenKind.ParenthesisStart, Position++, "(", null);
+                    token = new Token(TokenKind.ParenthesisStart, CurrentLineNumber, "(", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.ParenthesisStart);
 
                     return (Token)token;
 
                 case ')':
-                    token = new Token(TokenKind.ParenthesisEnd, Position++, ")", null);
+                    token = new Token(TokenKind.ParenthesisEnd, CurrentLineNumber, ")", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.ParenthesisEnd);
 
                     return (Token)token;
 
                 case '[':
-                    token = new Token(TokenKind.BracketStart, Position++, "[", null);
+                    token = new Token(TokenKind.BracketStart, CurrentLineNumber, "[", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.BracketStart);
 
                     return (Token)token;
 
                 case ']':
-                    token = new Token(TokenKind.BracketEnd, Position++, "]", null);
+                    token = new Token(TokenKind.BracketEnd, CurrentLineNumber, "]", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.BracketEnd);
 
                     return (Token)token;
 
                 case '{':
-                    token = new Token(TokenKind.CurlyBraceStart, Position++, "{", null);
+                    token = new Token(TokenKind.CurlyBraceStart, CurrentLineNumber, "{", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.CurlyBraceStart);
 
                     return (Token)token;
 
                 case '}':
-                    token = new Token(TokenKind.CurlyBraceEnd, Position++, "}", null);
+                    token = new Token(TokenKind.CurlyBraceEnd, CurrentLineNumber, "}", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.CurlyBraceEnd);
 
                     return (Token)token;
 
                 case '=':
-                    token = new Token(TokenKind.AssignOperator, Position++, "=", null);
+                    token = new Token(TokenKind.AssignOperator, CurrentLineNumber, "=", null);
+
+                    Position++;
 
                     TokenRegistry.AddRegister(TokenKind.AssignOperator);
+
+                    return (Token)token;
+
+                case '&':
+                    token = new Token(TokenKind.AndOperator, CurrentLineNumber, "&", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.AndOperator);
+
+                    return (Token)token;
+
+                case ';':
+                    token = new Token(TokenKind.EndOfLineIdentifier, CurrentLineNumber, ";", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.EndOfLineIdentifier);
+
+                    return (Token)token;
+
+                case '!':
+                    token = new Token(TokenKind.NotOperator, CurrentLineNumber, "!", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.NotOperator);
+
+                    return (Token)token;
+
+                case '%':
+                    token = new Token(TokenKind.ModOperator, CurrentLineNumber, "%", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.ModOperator);
+
+                    return (Token)token;
+
+                case '>':
+                    token = new Token(TokenKind.GreaterThenOperator, CurrentLineNumber, ">", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.GreaterThenOperator);
+
+                    return (Token)token;
+
+                case '<':
+                    token = new Token(TokenKind.LesserThenOperator, CurrentLineNumber, "<", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.LesserThenOperator);
+
+                    return (Token)token;
+
+                case ',':
+                    token = new Token(TokenKind.Comma, CurrentLineNumber, ",", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.Comma);
+
+                    return (Token)token;
+
+                case '\"':
+                    token = new Token(TokenKind.Quotes, CurrentLineNumber, "\"", null);
+
+                    Position++;
+
+                    TokenRegistry.AddRegister(TokenKind.Comma);
 
                     return (Token)token;
 
@@ -207,7 +326,11 @@ namespace Compilador.LexicAnalysor
 
             TokenRegistry.AddRegister(TokenKind.BadToken);
 
-            return new Token(TokenKind.BadToken, Position++, Text.Substring(Position - 1, 1), null);
+            var badToken = new Token(TokenKind.BadToken, CurrentLineNumber, Text.Substring(Position - 1, 1), null);
+
+            Position++;
+
+            return badToken;
         }
 
         private void AddSymbolToTable(Token token, int lenghtBefore, int lenghtAfter)
@@ -223,6 +346,24 @@ namespace Compilador.LexicAnalysor
                 SymbolTable.Add(new SymbolEntry(currentEntry, CurrentLineNumber, lenghtBefore, lenghtAfter, token));
                 currentEntry++;
             }            
+        }
+
+        private Token IdentifyCharToken(string text, int oldLength)
+        {
+            string upperText = text.ToUpper();
+
+            foreach (var regx in TokenRegistry.RegexBank)
+            {
+                if (Regex.IsMatch(upperText, regx.Value))
+                {
+                    TokenRegistry.AddRegister(regx.Key);
+                    return new Token(regx.Key, CurrentLineNumber, text, text);
+                }
+            }
+
+            TokenRegistry.AddRegister(TokenKind.BadToken);
+
+            return new Token(TokenKind.BadToken, CurrentLineNumber, text, null);
         }
 
     }

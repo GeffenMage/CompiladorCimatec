@@ -63,14 +63,14 @@ namespace Compilador.ReportGenerator
 
                 string reportLineText = $"" +
                     $" ({token.Kind})\n" +
-                    $"      código : {(int)token.Kind},\n" +
-                    $"      texto: '{token.Text}',\n" +
-                    $"      ocorrencias: {numOfOcurrences},\n";
+                    $"      Código : {(int)token.Kind},\n" +
+                    $"      Texto: '{token.Text}',\n" +
+                    $"      Ocorrencias: {numOfOcurrences},\n";
 
                 writer.Write(reportLineText);
 
                 if (tokenEntry != null)
-                    writer.WriteLine($"      índicie na tabela de símbolos: {tokenEntry.EntryNumber}");                
+                    writer.WriteLine($"      Índicie na tabela de símbolos: {tokenEntry.EntryNumber}");                
             }
 
             writer.Flush();
@@ -79,7 +79,27 @@ namespace Compilador.ReportGenerator
 
         public void CreateSymbolTableReport()
         {
+            string symbolTableReportFileExtension = ".TAB";
 
+            string symbolTableReportFilePath = InputFilePath + symbolTableReportFileExtension;
+
+            var writer = File.CreateText(symbolTableReportFilePath);
+
+            foreach (var symbol in SymbolTable)
+            {
+                string reportLineText = $"" +
+                    $"({symbol.SymbolToken.Kind})\n" +
+                    $"      Número de Entrada: {symbol.EntryNumber}\n" +
+                    $"      Texto: {symbol.SymbolToken.Text}\n" +
+                    $"      Caracteres antes da truncagem: {symbol.CharAmoutBeforeAjustment}\n" +
+                    $"      Caracteres depois da truncagem: {symbol.CharAmoutAfterAjustment}\n" +
+                    $"      Cinco primeiras linhas: {symbol.Lines.Take(symbol.Lines.Count)}\n";
+
+                writer.Write(reportLineText);
+            }
+
+            writer.Flush();
+            writer.Close();
         }
     }
 }
