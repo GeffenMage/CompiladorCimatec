@@ -10,11 +10,10 @@
         FunctionName = 513,
         VaribleName = 514,
 
-
         Comma = 425,
         HashTag = 410,
-        Quotes,
-        Whitespace,
+        Quotes = 1,
+        Whitespace = 0,
         
         // Identificadores de Tipo ex.: A palavra literal do tipo como 'int' ou 'float'
         FloatIdentifier = 322,
@@ -34,7 +33,7 @@
         BeginIdentifier = 325,
         EndIdentifier = 318,
         EndOfLineIdentifier = 414,
-        EndOfFile,
+        EndOfFile = 2,
 
         // Palavras-Chave
         ReturnKeyword = 319,
@@ -74,12 +73,12 @@
         AndOperator = 411,
 
         // Comentários
-        SingleLineComment,
+        SingleLineComment = 3,
         
-        MultiLineCommentStart,
-        MultiLineCommentEnd,
+        MultiLineCommentStart = 4,
+        MultiLineCommentEnd = 5,
 
         // Token Não identificado
-        BadToken,
+        BadToken = 6,
     }
 }

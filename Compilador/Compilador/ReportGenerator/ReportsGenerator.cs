@@ -81,7 +81,7 @@ namespace Compilador.ReportGenerator
         {
             string symbolTableReportFileExtension = ".TAB";
 
-            string symbolTableReportFilePath = InputFilePath + symbolTableReportFileExtension;
+            var symbolTableReportFilePath = InputFilePath.Replace(InputFileExtension, symbolTableReportFileExtension);
 
             var writer = File.CreateText(symbolTableReportFilePath);
 
